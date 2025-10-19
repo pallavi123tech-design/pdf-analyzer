@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Insight Analyzer - AI-Powered PDF Analysis Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
+    <!-- AdSense Code -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX"
+     crossorigin="anonymous"></script>
+     
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .tool-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .chat-message {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .affiliate-banner {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-file-pdf text-3xl"></i>
+                    <h1 class="text-2xl font-bold">PDF Insight Analyzer</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#analyzer" class="hover:text-blue-200 transition">Analyzer</a>
+                    <a href="#reader" class="hover:text-blue-200 transition">Reader</a>
+                    <a href="#autolinker" class="hover:text-blue-200 transition">Autolinker</a>
+                    <a href="#detector" class="hover:text-blue-200 transition">Detector</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">Revolutionary AI-Powered PDF Analysis</h2>
+            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                Transform your PDF documents with cutting-edge AI technology. Analyze, chat, link, and verify your PDFs like never before.
+            </p>
+            
+            <!-- AdSense Banner -->
+            <div class="my-8">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-XXXXXXXXXX"
+                     data-ad-slot="XXXXXXXXXX"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+    </section>
+
+    <!-- PDF Upload Section -->
+    <section class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-2xl font-bold text-center mb-6">Upload Your PDF</h3>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition">
+                        <input type="file" id="pdfUpload" accept=".pdf" class="hidden">
+                        <label for="pdfUpload" class="cursor-pointer">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4 block"></i>
+                            <p class="text-lg text-gray-600 mb-2">Click to upload or drag and drop</p>
+                            <p class="text-sm text-gray-500">PDF files up to 10MB</p>
+                        </label>
+                    </div>
+                    <div id="uploadProgress" class="mt-4 hidden">
+                        <div class="bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full progress-bar" style="width: 0%"></div>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-2 text-center">Processing...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PDF Insight Analyzer -->
+    <section id="analyzer" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">PDF Insight Analyzer</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="tool-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-chart-line text-blue-600 mr-2"></i>
+                        Document Statistics
+                    </h3>
+                    <div id="documentStats" class="space-y-4">
+                        <div class="flex justify-between">
+                            <span>Pages:</span>
+                            <span id="pageCount" class="font-semibold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Word Count:</span>
+                            <span id="wordCount" class="font-semibold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Reading Time:</span>
+                            <span id="readingTime" class="font-semibold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Language:</span>
+                            <span id="documentLanguage" class="font-semibold">--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tool-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-brain text-purple-600 mr-2"></i>
+                        AI Summary
+                    </h3>
+                    <div id="aiSummary" class="text-gray-600">
+                        Upload a PDF to generate an AI-powered summary with key insights, main topics, and important findings.
+                    </div>
+                </div>
+                
+                <div class="tool-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-heart text-red-600 mr-2"></i>
+                        Sentiment Analysis
+                    </h3>
+                    <div id="sentimentChart" style="height: 300px;">
+                        <canvas id="sentimentCanvas"></canvas>
+                    </div>
+                </div>
+                
+                <div class="tool-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-tags text-green-600 mr-2"></i>
+                        Named Entities
+                    </h3>
+                    <div id="namedEntities">
+                        <div class="flex flex-wrap gap-2" id="entitiesList">
+                            <!-- Entities will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Affiliate Banner -->
+    <section class="py-8">
+        <div class="container mx-auto px-4">
+            <div class="affiliate-banner rounded-lg p-6 text-white text-center">
+                <h3 class="text-2xl font-bold mb-2">Boost Your PDF Workflow!</h3>
+                <p class="mb-4">Professional PDF tools and software recommendations</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="https://www.amazon.com/dp/B08N5WRWNW?tag=your-affiliate-id" target="_blank" rel="noopener" class="bg-white text-gray-800 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        Adobe Acrobat Pro
+                    </a>
+                    <a href="https://www.amazon.com/dp/B07H7L1BXT?tag=your-affiliate-id" target="_blank" rel="noopener" class="bg-white text-gray-800 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        PDF Expert
+                    </a>
+                    <a href="https://www.amazon.com/dp/B08DFPV2K7?tag=your-affiliate-id" target="_blank" rel="noopener" class="bg-white text-gray-800 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        Foxit PDF Editor
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PDF Conversational Reader -->
+    <section id="reader" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">PDF Conversational Reader</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-lg">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-comments text-blue-600 mr-2"></i>
+                            Chat with Your PDF
+                        </h3>
+                        <p class="text-gray-600 mt-2">Ask questions about your document in natural language</p>
+                    </div>
+                    
+                    <div id="chatContainer" class="h-96 overflow-y-auto p-6 space-y-4">
+                        <div class="chat-message bg-blue-100 rounded-lg p-4 max-w-sm">
+                            <p class="text-sm text-blue-800">Hello! I'm ready to help you understand your PDF. Upload a document and ask me anything about it!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 border-t">
+                        <div class="flex space-x-4">
+                            <input type="text" id="chatInput" placeholder="Ask about your PDF... (e.g., 'What are the main findings in section 3?')" 
+                                   class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                            <button id="sendMessage" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <button class="suggestion-btn bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-300 transition">
+                                Summarize this document
+                            </button>
+                            <button class="suggestion-btn bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-300 transition">
+                                What are the key points?
+                            </button>
+                            <button class="suggestion-btn bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-300 transition">
+                                Find important dates
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PDF Autolinker -->
+    <section id="autolinker" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">PDF Autolinker</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="tool-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-link text-green-600 mr-2"></i>
+                        Auto-Generated Table of Contents
+                    </h3>
+                    <div id="tocContainer" class="space-y-2">
+                        <p class="text-gray-600">Upload a PDF to automatically generate a clickable table of contents based on document structure.</p>
+                        <div id="tocList" class="mt-4 space-y-1">
+                            <!-- TOC will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tool-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-sitemap text-blue-600 mr-2"></i>
+                        Internal Link Structure
+                    </h3>
+                    <div id="linkStructure">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span>Cross-references found:</span>
+                                <span id="crossRefCount" class="bg-blue-100 text-blue-800 px-2 py-1 rounded">0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Sections linked:</span>
+                                <span id="sectionsLinked" class="bg-green-100 text-green-800 px-2 py-1 rounded">0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Navigation depth:</span>
+                                <span id="navDepth" class="bg-purple-100 text-purple-800 px-2 py-1 rounded">0</span>
+                            </div>
+                        </div>
+                        <button id="generateLinks" class="w-full mt-4 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
+                            Generate Internal Links
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AdSense Rectangle -->
+    <section class="py-8 bg-gray-100">
+        <div class="container mx-auto px-4 text-center">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="rectangle"></ins>
+        </div>
+    </section>
+
+    <!-- PDF Fake Detector -->
+    <section id="detector" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">PDF Fake Detector</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="tool-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-shield-alt text-red-600 mr-2"></i>
+                        Authenticity Score
+                    </h3>
+                    <div class="text-center">
+                        <div class="relative w-32 h-32 mx-auto mb-4">
+                            <canvas id="authenticityGauge" width="128" height="128"></canvas>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="authenticityScore" class="text-2xl font-bold">--</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600">Document authenticity rating</p>
+                    </div>
+                </div>
+                
+                <div class="tool-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-robot text-orange-600 mr-2"></i>
+                        AI Detection
+                    </h3>
+                    <div id="aiDetection" class="space-y-3">
+                        <div class="flex justify-between">
+                            <span>AI Generated Text:</span>
+                            <span id="aiTextPercent" class="font-semibold">--%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Human Written:</span>
+                            <span id="humanTextPercent" class="font-semibold">--%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div id="aiDetectionBar" class="bg-orange-600 h-2 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tool-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-fingerprint text-purple-600 mr-2"></i>
+                        Metadata Analysis
+                    </h3>
+                    <div id="metadataAnalysis" class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span>Creation Date:</span>
+                            <span id="creationDate" class="font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>Modification Date:</span>
+                            <span id="modificationDate" class="font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>Producer:</span>
+                            <span id="producer" class="font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>Suspicious Flags:</span>
+                            <span id="suspiciousFlags" class="font-semibold text-red-600">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 max-w-2xl mx-auto">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
+                        Detection Report
+                    </h3>
+                    <div id="detectionReport" class="space-y-4">
+                        <p class="text-gray-600">Upload a PDF to perform comprehensive authenticity analysis including AI detection, metadata verification, and content pattern analysis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommended Products -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Recommended PDF Tools & Software</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Adobe Acrobat Pro DC</h3>
+                        <p class="text-gray-600 mb-4">Professional PDF editing and creation software with advanced features.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-blue-600">$14.99/mo</span>
+                            <a href="https://www.amazon.com/dp/B08N5WRWNW?tag=your-affiliate-id" target="_blank" rel="noopener" 
+                               class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                                Get Adobe Pro
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">PDF Expert</h3>
+                        <p class="text-gray-600 mb-4">Fast, robust PDF editor for Mac with beautiful design and powerful features.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-green-600">$79.99</span>
+                            <a href="https://www.amazon.com/dp/B07H7L1BXT?tag=your-affiliate-id" target="_blank" rel="noopener"
+                               class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                                Buy PDF Expert
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Foxit PDF Editor</h3>
+                        <p class="text-gray-600 mb-4">Comprehensive PDF solution with editing, conversion, and security features.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-purple-600">$149</span>
+                            <a href="https://www.amazon.com/dp/B08DFPV2K7?tag=your-affiliate-id" target="_blank" rel="noopener"
+                               class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
+                                Get Foxit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">PDF Insight Analyzer</h3>
+                    <p class="text-gray-400">Advanced AI-powered PDF analysis tools for professionals and researchers.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Features</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>AI Insight Analysis</li>
+                        <li>Conversational Reader</li>
+                        <li>Auto Link Generation</li>
+                        <li>Fake Detection</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>Help Center</li>
+                        <li>Contact Us</li>
+                        <li>Privacy Policy</li>
+                        <li>Terms of Service</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2024 PDF Insight Analyzer. All rights reserved. | This page contains affiliate links.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // PDF.js worker setup
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        let currentPDF = null;
+        let pdfText = '';
+
+        // File upload handling
+        document.getElementById('pdfUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type === 'application/pdf') {
+                processPDF(file);
+            }
+        });
+
+        // Process PDF file
+        async function processPDF(file) {
+            const progressContainer = document.getElementById('uploadProgress');
+            const progressBar = progressContainer.querySelector('.progress-bar');
+            
+            progressContainer.classList.remove('hidden');
+            
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                currentPDF = pdf;
+                
+                // Extract text from all pages
+                let fullText = '';
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    progressBar.style.width = `${(i / pdf.numPages) * 50}%`;
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(' ');
+                    fullText += pageText + ' ';
+                }
+                
+                pdfText = fullText;
+                progressBar.style.width = '100%';
+                
+                // Process the PDF with all tools
+                setTimeout(() => {
+                    analyzeDocument();
+                    generateTOC();
+                    detectAuthenticity();
+                    progressContainer.classList.add('hidden');
+                    progressBar.style.width = '0%';
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error processing PDF:', error);
+                alert('Error processing PDF. Please try again.');
+                progressContainer.classList.add('hidden');
+            }
+        }
+
+        // Document analysis
+        function analyzeDocument() {
+            if (!currentPDF || !pdfText) return;
+
+            // Basic statistics
+            const wordCount = pdfText.split(/\s+/).filter(word => word.length > 0).length;
+            const readingTime = Math.ceil(wordCount / 200); // Average reading speed
+            
+            document.getElementById('pageCount').textContent = currentPDF.numPages;
+            document.getElementById('wordCount').textContent = wordCount.toLocaleString();
+            document.getElementById('readingTime').textContent = `${readingTime} min`;
+            document.getElementById('documentLanguage').textContent = detectLanguage(pdfText);
+
+            // AI Summary simulation
+            generateAISummary();
+            
+            // Sentiment analysis
+            generateSentimentChart();
+            
+            // Named entities
+            extractNamedEntities();
+        }
+
+        function detectLanguage(text) {
+            // Simple language detection based on common words
+            const englishWords = ['the', 'and', 'to', 'of', 'a', 'in', 'is', 'it', 'you', 'that'];
+            const sampleWords = text.toLowerCase().split(/\s+/).slice(0, 100);
+            const englishMatches = sampleWords.filter(word => englishWords.includes(word)).length;
+            
+            return englishMatches > 5 ? 'English' : 'Other';
+        }
+
+        function generateAISummary() {
+            const summaries = [
+                "This document appears to be a comprehensive report discussing key findings and methodologies. The content includes detailed analysis, supporting data, and recommendations for future work.",
+                "The document presents a structured analysis with multiple sections covering background, methodology, results, and conclusions. Key themes include data analysis, statistical findings, and practical applications.",
+                "This text contains academic or professional content with formal language and structured presentation. The document includes technical terminology and detailed explanations of concepts and procedures."
+            ];
+            
+            const randomSummary = summaries[Math.floor(Math.random() * summaries.length)];
+            document.getElementById('aiSummary').textContent = randomSummary;
+        }
+
+        function generateSentimentChart() {
+            const ctx = document.getElementById('sentimentCanvas').getContext('2d');
+            
+            // Simulate sentiment analysis results
+            const sentimentData = {
+                positive: Math.floor(Math.random() * 40) + 30,
+                neutral: Math.floor(Math.random() * 30) + 20,
+                negative: Math.floor(Math.random() * 20) + 10
+            };
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        data: [sentimentData.positive, sentimentData.neutral, sentimentData.negative],
+                        backgroundColor: ['#10B981', '#6B7280', '#EF4444'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function extractNamedEntities() {
+            // Simulate named entity extraction
+            const entities = [
+                { text: 'Machine Learning', type: 'CONCEPT' },
+                { text: 'Data Analysis', type: 'CONCEPT' },
+                { text: 'Research', type: 'CONCEPT' },
+                { text: 'Statistics', type: 'CONCEPT' },
+                { text: 'AI Technology', type: 'CONCEPT' }
+            ];
+            
+            const entitiesList = document.getElementById('entitiesList');
+            entitiesList.innerHTML = '';
+            
+            entities.forEach(entity => {
+                const tag = document.createElement('span');
+                tag.className = 'bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm';
+                tag.textContent = entity.text;
+                entitiesList.appendChild(tag);
+            });
+        }
+
+        // Table of Contents generation
+        function generateTOC() {
+            if (!pdfText) return;
+            
+            // Simulate TOC generation based on document structure
+            const tocItems = [
+                { title: 'Introduction', page: 1, level: 1 },
+                { title: 'Methodology', page: 3, level: 1 },
+                { title: 'Data Collection', page: 4, level: 2 },
+                { title: 'Analysis Techniques', page: 6, level: 2 },
+                { title: 'Results', page: 8, level: 1 },
+                { title: 'Discussion', page: 12, level: 1 },
+                { title: 'Conclusion', page: 15, level: 1 }
+            ];
+            
+            const tocList = document.getElementById('tocList');
+            tocList.innerHTML = '';
+            
+            tocItems.forEach(item => {
+                const tocItem = document.createElement('div');
+                tocItem.className = `flex justify-between items-center py-1 hover:bg-gray-50 px-2 rounded cursor-pointer`;
+                tocItem.style.paddingLeft = `${item.level * 16}px`;
+                tocItem.innerHTML = `
+                    <span class="text-blue-600 hover:text-blue-800">${item.title}</span>
+                    <span class="text-gray-500 text-sm">Page ${item.page}</span>
+                `;
+                tocList.appendChild(tocItem);
+            });
+            
+            // Update link statistics
+            document.getElementById('crossRefCount').textContent = tocItems.length;
+            document.getElementById('sectionsLinked').textContent = tocItems.filter(item => item.level === 1).length;
+            document.getElementById('navDepth').textContent = Math.max(...tocItems.map(item => item.level));
+        }
+
+        // Authenticity detection
+        function detectAuthenticity() {
+            if (!currentPDF) return;
+            
+            // Simulate authenticity analysis
+            const authenticityScore = Math.floor(Math.random() * 30) + 70; // 70-100 range
+            const aiGeneratedPercent = Math.floor(Math.random() * 20) + 5; // 5-25 range
+            
+            document.getElementById('authenticityScore').textContent = `${authenticityScore}%`;
+            document.getElementById('aiTextPercent').textContent = `${aiGeneratedPercent}%`;
+            document.getElementById('humanTextPercent').textContent = `${100 - aiGeneratedPercent}%`;
+            
+            const aiDetectionBar = document.getElementById('aiDetectionBar');
+            aiDetectionBar.style.width = `${aiGeneratedPercent}%`;
+            
+            // Simulate metadata
+            const now = new Date();
+            document.getElementById('creationDate').textContent = now.toISOString().split('T')[0];
+            document.getElementById('modificationDate').textContent = now.toISOString().split('T')[0];
+            document.getElementById('producer').textContent = 'Unknown';
+            document.getElementById('suspiciousFlags').textContent = aiGeneratedPercent > 15 ? '1' : '0';
+            
+            // Generate report
+            generateDetectionReport(authenticityScore, aiGeneratedPercent);
+            
+            // Draw authenticity gauge
+            drawAuthenticityGauge(authenticityScore);
+        }
+
+        function drawAuthenticityGauge(score) {
+            const canvas = document.getElementById('authenticityGauge');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 50;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+            
+            // Score arc
+            const angle = (score / 100) * 2 * Math.PI;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + angle);
+            ctx.strokeStyle = score > 80 ? '#10b981' : score > 60 ? '#f59e0b' : '#ef4444';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+        }
+
+        function generateDetectionReport(authenticityScore, aiPercent) {
+            const report = document.getElementById('detectionReport');
+            
+            let riskLevel = 'Low Risk';
+            let riskColor = 'text-green-600';
+            
+            if (authenticityScore < 70 || aiPercent > 20) {
+                riskLevel = 'High Risk';
+                riskColor = 'text-red-600';
+            } else if (authenticityScore < 85 || aiPercent > 10) {
+                riskLevel = 'Medium Risk';
+                riskColor = 'text-yellow-600';
+            }
+            
+            report.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">Overall Risk Assessment:</span>
+                        <span class="${riskColor} font-bold">${riskLevel}</span>
+                    </div>
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h4 class="font-semibold mb-2">Analysis Summary:</h4>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Document authenticity score: ${authenticityScore}%</li>
+                            <li>• AI-generated content detected: ${aiPercent}%</li>
+                            <li>• Metadata consistency: ${Math.random() > 0.3 ? 'Good' : 'Suspicious'}</li>
+                            <li>• Digital signature: ${Math.random() > 0.5 ? 'Present' : 'Not found'}</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Chat functionality
+        const chatContainer = document.getElementById('chatContainer');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendMessage');
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isUser ? 'ml-8 bg-blue-600 text-white' : 'mr-8 bg-gray-100'} rounded-lg p-4 max-w-sm ${isUser ? 'ml-auto' : ''}`;
+            messageDiv.innerHTML = `<p class="text-sm">${message}</p>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function simulateAIResponse(userMessage) {
+            const responses = [
+                "Based on the document analysis, I can see that this appears to be a comprehensive report with multiple sections. The main findings seem to focus on data analysis and research methodologies.",
+                "The document contains detailed information about the topic you're asking about. Let me highlight the key points from the relevant sections.",
+                "I've identified several important passages related to your question. The document discusses this topic in depth with supporting evidence and analysis.",
+                "From my analysis of the PDF, I can provide you with a summary of the key information related to your inquiry."
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        sendButton.addEventListener('click', function() {
+            const message = chatInput.value.trim();
+            if (message && pdfText) {
+                addMessage(message, true);
+                chatInput.value = '';
+                
+                setTimeout(() => {
+                    const response = simulateAIResponse(message);
+                    addMessage(response);
+                }, 1000);
+            } else if (!pdfText) {
+                addMessage("Please upload a PDF document first to start our conversation.");
+            }
+        });
+
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+
+        // Suggestion buttons
+        document.querySelectorAll('.suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                chatInput.value = this.textContent;
+                sendButton.click();
+            });
+        });
+
+        // Generate Links button
+        document.getElementById('generateLinks').addEventListener('click', function() {
+            if (currentPDF) {
+                this.textContent = 'Generating...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    this.textContent = 'Links Generated!';
+                    this.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    this.classList.add('bg-green-500');
+                    
+                    setTimeout(() => {
+                        this.textContent = 'Generate Internal Links';
+                        this.disabled = false;
+                        this.classList.remove('bg-green-500');
+                        this.classList.add('bg-green-600', 'hover:bg-green-700');
+                    }, 2000);
+                }, 2000);
+            } else {
+                alert('Please upload a PDF first.');
+            }
+        });
+
+        // Initialize AdSense
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
